@@ -5,8 +5,11 @@ import com.example.demo.dto.Auth.LoginDto;
 import com.example.demo.dto.Auth.UserDto;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -15,14 +18,14 @@ public class UserController {
     UserService us;
 
     @PostMapping("/register")
-    public String register(@RequestBody UserDto user)
+    public ResponseEntity<?> register(@RequestBody UserDto user)
     {
         return us.register(user);
     }
 
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginDto user)
+    public ResponseEntity<?> login(@RequestBody LoginDto user)
     {
         return us.login(user);
     }
@@ -33,4 +36,4 @@ public class UserController {
     }
 
 
-}
+};

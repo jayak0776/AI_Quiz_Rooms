@@ -1,16 +1,53 @@
 import React, { useState } from "react";
 import { LuKey } from "react-icons/lu";
 import { TiUserOutline } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log({ email, password });
-    // TODO: connect with API
-  };
+  const handleLogin = async (e) => {
+  e.preventDefault();
+
+  const url = "http://localhost:8080/api/login";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Backend error message
+      alert(data.message || "Login failed");
+      return;
+    }
+
+    // ✅ Success
+    console.log("Login Success:", data);
+
+    // If using JWT
+    localStorage.setItem("token", data.token);
+
+    navigate("/home");
+
+    // Redirect example
+    // navigate("/dashboard");
+
+  } catch (error) {
+    console.error("Login Error:", error);
+    alert("Something went wrong. Try again!");
+  }
+};
+
 
   return (
     <div className="flex min-h-screen bg-gray-100">
