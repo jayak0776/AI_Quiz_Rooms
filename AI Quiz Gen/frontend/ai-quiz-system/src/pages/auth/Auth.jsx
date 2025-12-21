@@ -1,19 +1,75 @@
 import React, { useState } from "react";
 import { LuBrainCircuit } from "react-icons/lu";
 import { TiUserAdd } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
+
 
 const Auth = () => {
-  const [username, setUsername] = useState("");
-  const [fullname, setFullname] = useState("");
+
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+   const [confirmPassword, setConfirmPassword] = useState("");
   const [agree, setAgree] = useState(false);
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    console.log({ username, fullname, email, password, agree });
-    // TODO: connect with API
-  };
+  const navigate = useNavigate();
+
+
+ const handleRegister = async (e) => {
+  e.preventDefault();
+
+  // 🔐 Frontend validation
+  if (!fullName || !email || !password || !confirmPassword) {
+    alert("All fields are required");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+
+  if (!agree) {
+    alert("You must accept the terms & conditions");
+    return;
+  }
+
+  const url = "http://localhost:8080/api/register";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName,
+        email,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Registration failed");
+      return;
+    }
+
+    console.log("Registration Success:", data);
+    alert("Registration successful! Please login.");
+
+    navigate("/login");
+
+    // Optional: redirect to login page
+    // navigate("/login");
+
+  } catch (error) {
+    console.error("Register Error:", error);
+    alert("Something went wrong. Try again!");
+  }
+};
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -50,19 +106,12 @@ const Auth = () => {
 
           <form onSubmit={handleRegister}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
-                required
-              />
+             
               <input
                 type="text"
                 placeholder="Full Name"
-                value={fullname}
-                onChange={(e) => setFullname(e.target.value)}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
                 required
               />
@@ -80,6 +129,17 @@ const Auth = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
+                  required
+                />
+                {/* Optional: Eye icon for show/hide password */}
+              </div>
+              <div className="relative">
+                <input
+                  type="password"
+                  placeholder="Re-enter your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
                   required
                 />
