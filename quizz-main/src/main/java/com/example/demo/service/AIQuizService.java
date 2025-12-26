@@ -21,7 +21,6 @@ public class AIQuizService {
     private String apiKey;
 
     // ---------------- GENERATE QUIZ ----------------
-    // ---------------- GENERATE QUIZ ----------------
     public List<Questions> generateQuiz(AIQuizRequest request) {
         String promptText = buildPrompt(request.getTopic(), request.getDifficulty(), request.getQuestionCount());
 
