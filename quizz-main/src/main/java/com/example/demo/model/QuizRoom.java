@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,6 +21,7 @@ public class QuizRoom {
     @Id
     private String roomCode;
 
+    @Column(nullable = false)
     private boolean active;
 
     private LocalDateTime startTime;
