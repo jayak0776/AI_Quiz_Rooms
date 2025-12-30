@@ -11,4 +11,8 @@ import java.util.Optional;
 public interface ScoreRepository extends JpaRepository<Score, Long> {
     List<Score> findByRoomCodeOrderByScoreDesc(String roomCode);
     Optional<Score> findByRoomCodeAndUserId(String roomCode, Long userId);
+
+    boolean existsByUserIdAndRoomCode(Long userId, String roomCode);
+
+    List<Score> findAllByUserId(Long userId);
 }

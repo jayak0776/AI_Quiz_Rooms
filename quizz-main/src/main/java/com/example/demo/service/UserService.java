@@ -15,7 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -51,6 +53,7 @@ public class UserService {
 
 
         u.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        u.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(u);
 
@@ -71,10 +74,14 @@ public class UserService {
 
             String token =jwtService.generateToken(user.getEmail(),tokenExpiration);
 
+            Optional<Users> users = userRepository.findByEmail(user.getEmail());
+
+            Users u= users.get();
+
             if (authentication.isAuthenticated()) {
                 return ResponseEntity
                         .status(HttpStatus.OK)
-                        .body(new LoginResponse(token));
+                        .body(new LoginResponse(u.getId(), u.getFullName(), u.getEmail(), token));
             }
 
             return ResponseEntity
@@ -89,5 +96,9 @@ public class UserService {
     }
 
 
-
+    public ResponseEntity<?> getDetails(Long userId) {
+        Optional<Users> us = userRepository.findById(userId);
+        Users u =us.get();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(u);
+    }
 }

@@ -15,4 +15,7 @@ public class RoomCreationRequest {
     private int maxParticipants;
     private Long creatorId;
     private String creatorName;
+    private String topic;
+    private String difficulty;
+    private int questionCount;
 }

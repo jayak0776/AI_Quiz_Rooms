@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ai")
@@ -22,14 +24,19 @@ public class AIQuizController {
 
     @Autowired
     private QuestionsRepository questionRepository;
-
     @PostMapping("/generate")
-    public ResponseEntity<String> generateQuiz(
+    public ResponseEntity<Map<String, Object>> generateQuiz(
             @RequestBody AIQuizRequest request) {
 
         List<Questions> questions = aiQuizService.generateQuiz(request);
         questionRepository.saveAll(questions);
 
-        return ResponseEntity.ok("AI quiz generated successfully");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "AI quiz generated successfully");
+        response.put("questionCount", questions.size());
+        response.put("roomCode", request.getRoomCode()); // send room code too
+
+        return ResponseEntity.ok(response);
     }
+
 }

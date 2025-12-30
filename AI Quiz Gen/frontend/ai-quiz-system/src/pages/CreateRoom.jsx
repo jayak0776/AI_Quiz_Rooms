@@ -10,116 +10,128 @@ export default function CreateRoom() {
   const [creatorId, setCreatorId] = useState("");
   const [creatorName, setCreatorName] = useState("");
 
-  const formatDateTime = (input) => {
-    if (!input) return "";
-    const dateObj = new Date(input);
-    const yyyy = dateObj.getFullYear();
-    const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
-    const dd = String(dateObj.getDate()).padStart(2, "0");
-    const hh = String(dateObj.getHours()).padStart(2, "0");
-    const min = String(dateObj.getMinutes()).padStart(2, "0");
-    const ss = String(dateObj.getSeconds()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+ const handleCreateRoom = async (e) => {
+  e.preventDefault();
+
+  if (!startTime || !expirationTime || !maxParticipants || !creatorId || !creatorName) {
+    alert("All fields are required!");
+    return;
+  }
+
+  if (expirationTime <= startTime) {
+    alert("Expiration time must be after start time");
+    return;
+  }
+
+  const payload = {
+    roomCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+    active: true,
+    startTime,
+    expirationTime,
+    maxParticipants: Number(maxParticipants),
+    currentParticipants: 0,
+    creatorId: Number(creatorId),
+    creatorName: creatorName.trim(),
+    participants: [],
   };
 
-  const handleCreateRoom = async (e) => {
-    e.preventDefault();
+  try {
+    const token = localStorage.getItem("token");
 
-    if (!startTime || !expirationTime || !maxParticipants || !creatorId || !creatorName) {
-      alert("All fields are required!");
+    const response = await fetch("http://localhost:8080/api/room/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { message: text };
+    }
+
+    if (!response.ok) {
+      console.error("Backend error:", data);
+      alert(data.message || "Failed to create room");
       return;
     }
 
-    const payload = {
-      roomCode: Math.random().toString(36).substring(2, 8).toUpperCase(), // auto-generate code
-      active: true,
-      startTime: formatDateTime(startTime),
-      expirationTime: formatDateTime(expirationTime),
-      maxParticipants: parseInt(maxParticipants),
-      currentParticipants: 0,
-      creatorId: parseInt(creatorId),
-      creatorName: creatorName.trim(),
-      participants: [],
-    };
+    alert("Room created successfully!");
+    navigate("/home");
 
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/room/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+  } catch (error) {
+    console.error("Create room error:", error);
+    alert("Server error");
+  }
+};
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message || "Failed to create room");
-        return;
-      }
-
-      alert("Room created successfully!");
-      navigate("/home");
-    } catch (err) {
-      console.error("Error creating room:", err);
-      alert("Error creating room. Check console for details.");
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4">
       <div className="bg-gray-800 p-6 rounded-xl w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6">Create New Room</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Create New Room
+        </h2>
+
         <form onSubmit={handleCreateRoom} className="space-y-4">
           <div>
-            <label>Start Time:</label>
+            <label>Start Time</label>
             <input
               type="datetime-local"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full p-2 rounded bg-gray-700 text-white"
+              className="w-full p-2 rounded bg-gray-700"
               required
             />
           </div>
+
           <div>
-            <label>Expiration Time:</label>
+            <label>Expiration Time</label>
             <input
               type="datetime-local"
               value={expirationTime}
               onChange={(e) => setExpirationTime(e.target.value)}
-              className="w-full p-2 rounded bg-gray-700 text-white"
+              className="w-full p-2 rounded bg-gray-700"
               required
             />
           </div>
+
           <div>
-            <label>Max Participants:</label>
+            <label>Max Participants</label>
             <input
               type="number"
+              min="1"
               value={maxParticipants}
               onChange={(e) => setMaxParticipants(e.target.value)}
-              className="w-full p-2 rounded bg-gray-700 text-white"
+              className="w-full p-2 rounded bg-gray-700"
               required
             />
           </div>
+
           <div>
-            <label>Creator ID:</label>
+            <label>Creator ID</label>
             <input
               type="number"
               value={creatorId}
               onChange={(e) => setCreatorId(e.target.value)}
-              className="w-full p-2 rounded bg-gray-700 text-white"
+              className="w-full p-2 rounded bg-gray-700"
               required
             />
           </div>
+
           <div>
-            <label>Creator Name:</label>
+            <label>Creator Name</label>
             <input
               type="text"
               value={creatorName}
               onChange={(e) => setCreatorName(e.target.value)}
-              className="w-full p-2 rounded bg-gray-700 text-white"
+              className="w-full p-2 rounded bg-gray-700"
               required
             />
           </div>

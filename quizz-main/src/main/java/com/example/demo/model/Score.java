@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,4 +25,7 @@ public class Score {
 
     private String roomCode;
     private int score;
+    private int outOf;
+    private String topic;
+    private LocalDateTime attemptedAt;
 }

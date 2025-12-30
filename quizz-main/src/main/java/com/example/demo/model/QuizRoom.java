@@ -33,6 +33,11 @@ public class QuizRoom {
     private Long creatorId;       // ID of user who created room
     private String creatorName;   // Name of creator
 
+    private String topic;
+    private String difficulty;
+    private int questionCount;
+
+
     @ElementCollection
     private List<String> participants = new ArrayList<>();  // List of joined user names
 }

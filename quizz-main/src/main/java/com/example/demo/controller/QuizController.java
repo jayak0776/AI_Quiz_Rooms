@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.Room.QuizSubmissionDTO;
 import com.example.demo.model.Questions;
 import com.example.demo.model.Score;
 import com.example.demo.service.QuizService;
@@ -23,15 +24,27 @@ public class QuizController {
     }
 
     // Get questions for a room
-    @GetMapping("/questions/{roomCode}")
+    @GetMapping("/{roomCode}/questions")
     public List<Questions> getQuestions(@PathVariable String roomCode) {
         return quizService.getQuestions(roomCode);
     }
 
     // Submit answer
-    @PostMapping("/submit-answer")
-    public ResponseEntity<String> submitAnswer(@RequestBody Map<String, String> payload) {
-        return quizService.submitAnswer(payload);
+    @PostMapping("/{roomCode}/submit")
+    public ResponseEntity<?> submitQuiz(@PathVariable String roomCode, @RequestBody QuizSubmissionDTO submission) {
+        quizService.submitQuiz(roomCode, submission);
+        return ResponseEntity.ok().build(); // just return 200 OK
+    }
+
+    @GetMapping("/score/check/{roomCode}/user/{userId}")
+    public ResponseEntity<?> checkSubmission(@PathVariable String roomCode, @PathVariable Long userId) {
+        boolean submitted = quizService.hasUserSubmitted(userId, roomCode);
+        return ResponseEntity.ok(Map.of("submitted", submitted));
+    }
+
+    @GetMapping("/scores/{userId}")
+    public List<Score> scoreByUser(@PathVariable Long userId){
+        return quizService.scoreByUser(userId);
     }
 
     // Get leaderboard

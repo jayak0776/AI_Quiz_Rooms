@@ -4,14 +4,15 @@ import com.example.demo.dto.Room.RoomCreationRequest;
 import com.example.demo.model.QuizRoom;
 import com.example.demo.model.Users;
 import com.example.demo.repository.QuizRoomRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RoomService {
@@ -19,7 +20,10 @@ public class RoomService {
     @Autowired
     QuizRoomRepository quizRoomRepository;
 
-    public ResponseEntity<String> createRoom(RoomCreationRequest request) {
+    @Autowired
+    UserRepository userRepository;
+
+    public ResponseEntity<?> createRoom(RoomCreationRequest request) {
         String roomCode = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
 
         QuizRoom room = new QuizRoom();
@@ -31,9 +35,13 @@ public class RoomService {
         room.setCurrentParticipants(0);
         room.setCreatorId(request.getCreatorId());
         room.setCreatorName(request.getCreatorName());
+        room.setTopic(request.getTopic());
+        room.setDifficulty(request.getDifficulty());
+        room.setQuestionCount(request.getQuestionCount());
 
         quizRoomRepository.save(room);
-        return ResponseEntity.ok(roomCode);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("roomCode", roomCode));
     }
 
     public ResponseEntity<String> joinRoom(String roomCode, Users user) {
@@ -56,7 +64,7 @@ public class RoomService {
         }
 
         // Add participant
-        String participantName = user.getFullName() + "(" + user.getId() + ")";
+        String participantName = user.getFullName();
         if (!room.getParticipants().contains(participantName)) {
             room.getParticipants().add(participantName);
             room.setCurrentParticipants(room.getCurrentParticipants() + 1);
@@ -75,5 +83,18 @@ public class RoomService {
     }
 
 
+    public ResponseEntity<?> getAllRoomsByUser(Long userId) {
 
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<QuizRoom> rooms = quizRoomRepository.findAllByCreatorId(userId);
+
+        return ResponseEntity.ok(Map.of("rooms", rooms));
+    }
+
+    public ResponseEntity<?> getAllRooms() {
+        List<QuizRoom> rooms = quizRoomRepository.findAll();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of("rooms",rooms));
+    }
 }

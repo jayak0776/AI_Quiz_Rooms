@@ -72,34 +72,37 @@ const Auth = () => {
 
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div
+      className="flex flex-col md:flex-row"
+      style={{ minHeight: "calc(100vh - 4rem)" }}
+    >
       {/* Left Image Panel */}
-      <div className="w-full md:w-1/2 bg-gradient-to-tr from-indigo-900 via-purple-900 to-[#6d54b5] flex items-center justify-center text-white p-6 md:p-10">
+      <div className="w-full md:w-1/2 bg-main flex items-center justify-center p-6 md:p-10">
         <div className="text-center">
           <div className="flex justify-center items-center mb-6">
-            <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-[#2c2638] flex justify-center items-center shadow-sm shadow-white">
+            <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-main flex justify-center items-center shadow-sm shadow-white">
               <LuBrainCircuit className="text-6xl sm:text-8xl text-gray-300" />
             </div>
           </div>
           <h1 className="text-xl sm:text-3xl font-bold mb-3 text-gray-300 px-2 sm:px-0">
             Your brain + AI challenges = endless fun.
           </h1>
-          <p className="text-sm sm:text-md opacity-80 px-2 sm:px-0">
+          <p className="text-sm text-sec sm:text-md opacity-80 px-2 sm:px-0">
             Join our platform and enjoy AI-powered quiz rooms
           </p>
         </div>
       </div>
 
       {/* Right Form Panel */}
-      <div className="w-full md:w-1/2 bg-[#2c2638] flex items-center justify-center p-6 md:p-10">
-        <div className="w-full max-w-md text-white">
+      <div className="w-full md:w-1/2 bg-main flex items-center justify-center p-6 md:p-10">
+        <div className="w-full max-w-md text-white bg-sec p-8 rounded-sm shadow-lg">
           <div className="flex items-center gap-2 mb-4">
-            <TiUserAdd className="text-4xl sm:text-5xl" />
-            <h2 className="text-2xl sm:text-3xl capitalize font-bold">Create an account</h2>
+            <TiUserAdd className="text-4xl sm:text-5xl text-main" />
+            <h2 className="text-2xl sm:text-3xl text-main font-bold uppercase">Create an account</h2>
           </div>
-          <p className="mb-6 text-gray-400 text-sm sm:text-md">
+          <p className="mb-6 text-gray-500 text-sm sm:text-md">
             Already have an account?{" "}
-            <a href="/login" className="text-[#6d54b5] hover:underline font-medium">
+            <a href="/login" className="text-main hover:underline font-medium">
               Log Now
             </a>
           </p>
@@ -109,27 +112,27 @@ const Auth = () => {
              
               <input
                 type="text"
-                placeholder="Full Name"
+                placeholder="Enter your full name..."
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
+                className="w-full px-4 py-3  bg-main border placeholder-gray-500 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-colors duration-200 hover:border-accent"
                 required
               />
               <input
                 type="email"
-                placeholder="Email"
+                placeholder="Enter your email..."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
+                className="w-full px-4 py-3 bg-main border placeholder-gray-500 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-colors duration-200 hover:border-accent"
                 required
               />
               <div className="relative">
                 <input
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Enter your password..."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
+                  className="w-full px-4 py-3 bg-main border placeholder-gray-500 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-colors duration-200 hover:border-accent"
                   required
                 />
                 {/* Optional: Eye icon for show/hide password */}
@@ -137,10 +140,10 @@ const Auth = () => {
               <div className="relative">
                 <input
                   type="password"
-                  placeholder="Re-enter your password"
+                  placeholder="Re-enter your password..."
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-md bg-[#2c2638] border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6d54b5]"
+                  className="w-full px-4 py-3 bg-main border placeholder-gray-500 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-colors duration-200 hover:border-accent"
                   required
                 />
                 {/* Optional: Eye icon for show/hide password */}
@@ -153,12 +156,12 @@ const Auth = () => {
                 type="checkbox"
                 checked={agree}
                 onChange={() => setAgree(!agree)}
-                className="accent-[#6d54b5]"
+                className="accent-main"
                 required
               />
-              <span>
+              <span className="text-gray-500 text-sm">
                 I agree to the{" "}
-                <a href="#" className="text-[#6d54b5] hover:underline">
+                <a href="#" className="text-main hover:underline">
                   Terms & Conditions
                 </a>
               </span>
@@ -167,7 +170,7 @@ const Auth = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3 mt-4 bg-gradient-to-tr from-indigo-900 via-purple-900 to-[#6d54b5] cursor-pointer rounded-md hover:bg-[#6d54b5] transition font-semibold"
+              className="w-full py-3 mt-4 bg-main cursor-pointer rounded-xs hover:opacity-90 transition font-semibold"
             >
               Create Account
             </button>

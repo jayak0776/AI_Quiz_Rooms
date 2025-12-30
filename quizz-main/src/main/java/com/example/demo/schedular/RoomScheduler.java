@@ -21,18 +21,26 @@ public class RoomScheduler {
         List<QuizRoom> rooms = quizRoomRepository.findAll();
 
         for (QuizRoom room : rooms) {
-            // Start scheduled room
-            if (!room.isActive() && room.getStartTime() != null && now.isAfter(room.getStartTime())) {
-                room.setActive(true);
-                quizRoomRepository.save(room);
-            }
 
-            // Expire room
-            if (room.getExpirationTime() != null && now.isAfter(room.getExpirationTime())) {
-                room.setActive(false);
-                quizRoomRepository.save(room);
+            if (room.getStartTime() != null && room.getExpirationTime() != null) {
+
+                // ACTIVE window
+                if (now.isAfter(room.getStartTime()) && now.isBefore(room.getExpirationTime())) {
+                    if (!room.isActive()) {
+                        room.setActive(true);
+                        quizRoomRepository.save(room);
+                    }
+                }
+                // ENDED
+                else if (now.isAfter(room.getExpirationTime())) {
+                    if (room.isActive()) {
+                        room.setActive(false);
+                        quizRoomRepository.save(room);
+                    }
+                }
             }
         }
     }
+
 }
 

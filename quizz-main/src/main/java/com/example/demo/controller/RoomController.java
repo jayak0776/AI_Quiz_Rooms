@@ -18,7 +18,7 @@ public class RoomController {
     RoomService roomService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createRoom(@RequestBody RoomCreationRequest request) {
+    public ResponseEntity<?> createRoom(@RequestBody RoomCreationRequest request) {
         return roomService.createRoom(request);
     }
 
@@ -30,6 +30,16 @@ public class RoomController {
     @GetMapping("/{roomCode}")
     public ResponseEntity<QuizRoom> getRoom(@PathVariable String roomCode) {
         return roomService.getRoom(roomCode);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getAllRoomsByUser(@PathVariable Long userId){
+        return roomService.getAllRoomsByUser(userId);
+    }
+
+    @GetMapping("/all-rooms")
+    public ResponseEntity<?> getAllRooms(){
+        return roomService.getAllRooms();
     }
 
 

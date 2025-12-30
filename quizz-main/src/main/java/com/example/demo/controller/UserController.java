@@ -30,6 +30,11 @@ public class UserController {
         return us.login(user);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getDetails(@PathVariable Long userId){
+        return us.getDetails(userId);
+    }
+
     @GetMapping("/")
     public String greet(){
         return "Hello";

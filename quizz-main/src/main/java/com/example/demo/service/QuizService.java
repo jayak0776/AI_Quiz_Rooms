@@ -1,13 +1,17 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.Room.QuizSubmissionDTO;
 import com.example.demo.model.Questions;
+import com.example.demo.model.QuizRoom;
 import com.example.demo.model.Score;
 import com.example.demo.repository.QuestionsRepository;
+import com.example.demo.repository.QuizRoomRepository;
 import com.example.demo.repository.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +23,9 @@ public class QuizService {
 
     @Autowired
     ScoreRepository scoreRepository;
+
+    @Autowired
+    QuizRoomRepository quizRoomRepository;
 
     public ResponseEntity<String> addQuestion(Questions question) {
         questionsRepository.save(question);
@@ -44,7 +51,7 @@ public class QuizService {
         int scoreToAdd = question.getCorrectAnswer().equalsIgnoreCase(answer) ? 1 : 0;
 
         Score score = scoreRepository.findByRoomCodeAndUserId(roomCode, userId)
-                .orElse(new Score(null, userId, userName, roomCode, 0));
+                .orElse(new Score(null, userId, userName, roomCode, 0,0, "",null));
 
         score.setScore(score.getScore() + scoreToAdd);
         scoreRepository.save(score);
@@ -55,5 +62,41 @@ public class QuizService {
     // Get leaderboard
     public List<Score> getLeaderboard(String roomCode) {
         return scoreRepository.findByRoomCodeOrderByScoreDesc(roomCode);
+    }
+
+    public void submitQuiz(String roomCode, QuizSubmissionDTO submission) {
+        List<Questions> questions = questionsRepository.findByRoomCode(roomCode);
+        int scoreCount = 0;
+
+        for (Questions q : questions) {
+            String correctAnswer = q.getCorrectAnswer();
+            String selectedAnswer = submission.getAnswers().get(q.getId());
+            if (correctAnswer != null && correctAnswer.equals(selectedAnswer)) {
+                scoreCount++;
+            }
+        }
+
+        QuizRoom quizRoom = quizRoomRepository.findByRoomCode(roomCode);
+
+        // Save to Score table
+        Score score = new Score();
+        score.setUserId(submission.getUserId());
+        score.setUserName(submission.getUserFullName());
+        score.setRoomCode(roomCode);
+        score.setScore(scoreCount);
+        score.setOutOf(questions.toArray().length);
+        score.setTopic(quizRoom.getTopic());
+        score.setAttemptedAt(LocalDateTime.now());
+
+        scoreRepository.save(score);
+    }
+
+    public boolean hasUserSubmitted(Long userId, String roomCode) {
+        return scoreRepository.existsByUserIdAndRoomCode(userId, roomCode);
+    }
+
+    public List<Score> scoreByUser(Long userId) {
+        List<Score> scores = scoreRepository.findAllByUserId(userId);
+        return scores;
     }
 }

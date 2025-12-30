@@ -8,6 +8,11 @@ import Profile from "./pages/Profile"; // import Profile page
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import Navbar from "./pages/Navbar";
+import MyRooms from "./pages/MyRooms";
+import RoomsDashboard from "./pages/RoomDashboard";
+import QuizRoom from "./components/QuizRoom";
+import ScoreDashboard from "./components/User/ScoreDashboard";
+import QuizSolutionPage from "./components/QuizSolutionPage";
 
 export default function App() {
   return (
@@ -54,6 +59,38 @@ export default function App() {
           element={
             <ProtectedRoute>
               <JoinRoom />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-rooms/dashboard"
+          element={
+            <ProtectedRoute>
+              <RoomsDashboard/>
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <ScoreDashboard/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/room/:roomCode"
+          element={
+            <ProtectedRoute>
+              <QuizRoom/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz-solution/:roomCode"
+          element={
+            <ProtectedRoute>
+              <QuizSolutionPage/>
             </ProtectedRoute>
           }
         />
